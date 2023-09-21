@@ -6,17 +6,17 @@ const listaDeTareas = {
             texto: tareaTexto,
             completada: false
           });
-        },
+        }
         marcarTareaComoCompletada: function (indice) {
           if (indice >= 0 && indice < this.tareas.length) {
             this.tareas[indice].completada = true;
           }
-        },
+        }
         eliminarTarea: function (indice) {
           if (indice >= 0 && indice < this.tareas.length) {
             this.tareas.splice(indice, 1);
           }
-        },
+        }
         obtenerTareasCompletadas: function () {
           return this.tareas.filter(tarea => tarea.completada);
         }

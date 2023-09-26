@@ -48,6 +48,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function obtenerDietaRecomendada(categoria) {
         switch (categoria) {
+            case 'Bajo peso':
+                return 'Se recomienda iniciar consulta con el médico.';
             case 'Sobrepeso':
                 return 'Dieta para reducir el sobrepeso: Reduzca la ingesta de calorías y aumente la actividad física.';
             case 'Peso normal':

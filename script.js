@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const nombreInput = document.getElementById('nombre');
+    const EmailInput = document.getElementById('email');
     const alturaInput = document.getElementById('altura');
     const pesoInput = document.getElementById('peso');
     const calcularButton = document.getElementById('calcular');
@@ -85,6 +86,12 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
         });
     }
+    historialResultados.push(resultado);
+    mostrarResultado(resultado);
+    mostrarHistorial(historialResultados);
+
+    
+    guardarHistorialPersistente();
 
     function mostrarDetalle(index) {
         const detalleResultado = historialResultados[index];
@@ -106,4 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
         historialDiv.innerHTML = '';
         historialResultados.length = 0;
     }
-});
+
+   
+    }
+    )

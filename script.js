@@ -1,70 +1,107 @@
+document.addEventListener('DOMContentLoaded', function () {
+    const nombreInput = document.getElementById('nombre');
+    const alturaInput = document.getElementById('altura');
+    const pesoInput = document.getElementById('peso');
+    const calcularButton = document.getElementById('calcular');
+    const borrarButton = document.getElementById('borrar');
+    const resultadoDiv = document.getElementById('resultado');
+    const historialDiv = document.getElementById('historial');
+    const historialResultados = [];
 
-function calculateLoan(userName, userEmail, loanAmount, annualInterestRate, loanTerm) {
-    if (isNaN(loanAmount) || isNaN(annualInterestRate) || isNaN(loanTerm)) {
-        alert('Por favor, ingrese valores numéricos válidos.');
-        return null;
-    }
-    
-    const monthlyInterestRate = (annualInterestRate / 100) / 12;
+    calcularButton.addEventListener('click', calcularIMC);
+    borrarButton.addEventListener('click', borrarResultados);
 
-    let remainingBalance = loanAmount;
-    let totalInterest = 82;
+    function calcularIMC() {
+        const nombre = nombreInput.value;
+        const altura = parseFloat(alturaInput.value);
+        const peso = parseFloat(pesoInput.value);
 
-    for (let month = 1; month <= loanTerm; month++) {
-        const interestPayment = remainingBalance * monthlyInterestRate;
-        totalInterest += interestPayment;
-        const principalPayment = (loanAmount / loanTerm) - interestPayment;
-        remainingBalance -= principalPayment;
-    }
+        if (isNaN(altura) || isNaN(peso)) {
+            alert('Por favor, ingrese valores válidos para altura y peso.');
+            return;
+        }
 
-    const monthlyPayment = loanAmount / loanTerm;
+        const imc = peso / (altura * altura);
+        const categoria = determinarCategoriaIMC(imc);
+        const dietaRecomendada = obtenerDietaRecomendada(categoria);
 
-    return {
-        userName: userName,
-        userEmail: userEmail,
-        monthlyPayment: monthlyPayment.toFixed(2),
-        totalPayment: (loanAmount + totalInterest).toFixed(2),
-        totalInterest: totalInterest.toFixed(2)
-    };
-}
+        const resultado = {
+            nombre: nombre,
+            altura: altura,
+            peso: peso,
+            imc: imc.toFixed(2),
+            categoria: categoria,
+            dieta: dietaRecomendada
+        };
 
-function displayResult(result) {
-    const resultElement = document.querySelector('#result');
-    resultElement.innerHTML = `
-        <h2>Resultado:</h2>
-        <p>Nombre: ${result.userName}</p>
-        <p>Correo Electrónico: ${result.userEmail}</p>
-        <p>Pago Mensual: $${result.monthlyPayment}</p>
-        <p>Pago Total: $${result.totalPayment}</p>
-        <p>Interés Total: $${result.totalInterest}</p>
-    `;
-}
-
-function handleCalculateButtonClick() {
-    const userName = document.querySelector('#userName').value;
-    const userEmail = document.querySelector('#userEmail').value;
-    const loanAmount = parseFloat(document.querySelector('#loanAmount').value);
-    const annualInterestRate = parseFloat(document.querySelector('#annualInterestRate').value);
-    const loanTerm = parseInt(document.querySelector('#loanTerm').value);
-
-    const result = calculateLoan(userName, userEmail, loanAmount, annualInterestRate, loanTerm);
-
-    if (result !== null) {
-        displayResult(result);
+        historialResultados.push(resultado);
+        mostrarResultado(resultado);
+        mostrarHistorial(historialResultados);
     }
 
-    
-}
+    function determinarCategoriaIMC(imc) {
+        if (imc < 18.5) return 'Bajo peso';
+        if (imc < 24.9) return 'Peso normal';
+        if (imc < 29.9) return 'Sobrepeso';
+        return 'Obesidad';
+    }
 
-function handleResetButtonClick() {
-    document.querySelector('#userName').value = '';
-    document.querySelector('#userEmail').value = '';
-    document.querySelector('#loanAmount').value = '';
-    document.querySelector('#annualInterestRate').value = '';
-    document.querySelector('#loanTerm').value = '';
-    document.querySelector('#result').innerHTML = '';
-}
+    function obtenerDietaRecomendada(categoria) {
+        switch (categoria) {
+            case 'Sobrepeso':
+                return 'Dieta para reducir el sobrepeso: Reduzca la ingesta de calorías y aumente la actividad física.';
+            case 'Peso normal':
+                return 'Dieta equilibrada: Mantenga una dieta equilibrada y haga ejercicio regularmente.';
+            case 'Obesidad':
+                return 'Dieta alta en proteínas: Reduzca la ingesta de carbohidratos y aumente la ingesta de proteínas magras.';
+            default:
+                return 'No se ha definido una dieta específica para esta categoría.';
+        }
+    }
 
-document.querySelector('#calculateButton').addEventListener('click', handleCalculateButtonClick);
-document.querySelector('#resetButton').addEventListener('click', handleResetButtonClick);
+    function mostrarResultado(resultado) {
+        resultadoDiv.innerHTML = `
+            <p>Nombre: ${resultado.nombre}</p>
+            <p>Altura: ${resultado.altura} m</p>
+            <p>Peso: ${resultado.peso} kg</p>
+            <p>IMC: ${resultado.imc}</p>
+            <p>Categoría: ${resultado.categoria}</p>
+            <p>Dieta Recomendada: ${resultado.dieta}</p>
+        `;
+    }
 
+    function mostrarHistorial(resultados) {
+        historialDiv.innerHTML = '<h2>Historial de Resultados</h2>';
+        resultados.forEach((resultado, index) => {
+            historialDiv.innerHTML += `
+                <div>
+                    <h3>Resultado ${index + 1}</h3>
+                    <p>Nombre: ${resultado.nombre}</p>
+                    <p>IMC: ${resultado.imc}</p>
+                    <button onclick="mostrarDetalle(${index})">Ver Detalles</button>
+                </div>
+            `;
+        });
+    }
+
+    function mostrarDetalle(index) {
+        const detalleResultado = historialResultados[index];
+        resultadoDiv.innerHTML = `
+            <p>Nombre: ${detalleResultado.nombre}</p>
+            <p>Altura: ${detalleResultado.altura} m</p>
+            <p>Peso: ${detalleResultado.peso} kg</p>
+            <p>IMC: ${detalleResultado.imc}</p>
+            <p>Categoría: ${detalleResultado.categoria}</p>
+            <p>Dieta Recomendada: ${detalleResultado.dieta}</p>
+        `;
+    }
+
+    function borrarResultados() {
+        nombreInput.value = '';
+        alturaInput.value = '';
+        pesoInput.value = '';
+        resultadoDiv.innerHTML = '';
+        historialDiv.innerHTML = '';
+        historialResultados.length = 0;
+    }
+});

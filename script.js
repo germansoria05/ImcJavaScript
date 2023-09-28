@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const nombreInput = document.getElementById('nombre');
-    const EmailInput = document.getElementById('email');
+    const emailInput = document.getElementById('email');
     const alturaInput = document.getElementById('altura');
     const pesoInput = document.getElementById('peso');
     const calcularButton = document.getElementById('calcular');
@@ -11,6 +11,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     calcularButton.addEventListener('click', calcularIMC);
     borrarButton.addEventListener('click', borrarResultados);
+
+    fetch('datos.json')
+        .then(response => response.json())
+        .then(data => {
+            
+            historialResultados.push(...data); })
+            
+            .catch(error => {
+                console.error('Error al cargar datos desde el archivo JSON:', error);
+            });
 
     function calcularIMC() {
         const nombre = nombreInput.value;
@@ -38,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         historialResultados.push(resultado);
         mostrarResultado(resultado);
         mostrarHistorial(historialResultados);
+        guardarHistorialEnLocalStorage();
     }
 
     function determinarCategoriaIMC(imc) {
@@ -86,12 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
             `;
         });
     }
-    historialResultados.push(resultado);
-    mostrarResultado(resultado);
-    mostrarHistorial(historialResultados);
-
-    
-    guardarHistorialPersistente();
 
     function mostrarDetalle(index) {
         const detalleResultado = historialResultados[index];
@@ -107,13 +112,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function borrarResultados() {
         nombreInput.value = '';
+        emailInput.value = '';
         alturaInput.value = '';
         pesoInput.value = '';
         resultadoDiv.innerHTML = '';
         historialDiv.innerHTML = '';
         historialResultados.length = 0;
     }
-
-   
+    function guardarHistorialEnLocalStorage() {
     }
-    )
+})
+
